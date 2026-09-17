@@ -36,4 +36,18 @@ public class CustomerController {
         }
         return ResponseEntity.ok(customerFacade.createCustomer(customerDTO));
     }
+
+
+    //Actualizar un cliente existente
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerDTO> updateCustomer(@PathVariable Long id, @RequestBody CustomerDTO customerDTO) {
+        return ResponseEntity.ok(customerFacade.updateCustomer(id, customerDTO));
+    }
+
+    //Borrar un cliente
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
+        customerFacade.deleteCustomer(id);
+        return ResponseEntity.noContent().build();
+    }
 }

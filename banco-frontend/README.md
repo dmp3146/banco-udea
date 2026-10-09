@@ -1,33 +1,39 @@
-# Banco2025 – Frontend
+# Banco2025 - Frontend
 
-Frontend en React para el laboratorio de Arquitectura de Software (banco2025).
-Cubre las 3 vistas mínimas exigidas + el extra de editar/borrar clientes.
+Frontend del proyecto Banco2025 para el laboratorio de Arquitectura de Software. Está desarrollado en React y permite consultar, crear, editar y eliminar clientes, realizar transferencias entre cuentas y consultar el historial de transacciones.
 
-## Cómo correrlo
+## Cómo ejecutar el proyecto
+
+Instalar las dependencias:
 
 ```bash
 npm install
+```
+
+Iniciar la aplicación:
+
+```bash
 npm start
 ```
 
-Se abre en `http://localhost:3000`. El backend debe estar corriendo en
-`http://localhost:8080` (ver `src/api/axiosConfig.js` si usas otro puerto).
+El frontend se ejecuta en `http://localhost:3000`.
 
-## IMPORTANTE: habilita CORS en el backend
+El backend debe estar ejecutándose en `http://localhost:8080`. La configuración de conexión se encuentra en `src/api/axiosConfig.js`.
 
-Sin esto, el navegador bloqueará las peticiones desde `localhost:3000` hacia
-`localhost:8080`. Agrega esta clase en tu proyecto Spring:
+## Configuración de CORS
+
+Para permitir las peticiones desde el frontend, se puede agregar la siguiente configuración al proyecto Spring Boot:
 
 ```java
 package com.udea.bancoudea.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/api/**")
@@ -37,21 +43,20 @@ public class CorsConfig implements WebMvcConfigurer {
 }
 ```
 
-## Endpoints que este frontend espera
+## Endpoints del backend
 
-Algunos ya existen en el PDF, otros los tienes que agregar tú al
-`TransactionController` / `CustomerController`:
+| Método | Ruta                                        | Función                              |
+| ------ | ------------------------------------------- | ------------------------------------ |
+| GET    | `/api/customers`                            | Listar clientes                      |
+| POST   | `/api/customers`                            | Crear un cliente                     |
+| PUT    | `/api/customers/{id}`                       | Editar un cliente                    |
+| DELETE | `/api/customers/{id}`                       | Eliminar un cliente                  |
+| POST   | `/api/transactions/transfer`                | Realizar una transferencia           |
+| GET    | `/api/transactions/account/{accountNumber}` | Consultar el historial de una cuenta |
 
-| Método | Ruta                                | Estado                | Para qué |
-|--------|--------------------------------------|------------------------|----------|
-| GET    | `/api/customers`                     | ✅ ya está              | Listar clientes |
-| POST   | `/api/customers`                     | ✅ ya está              | Crear cliente |
-| PUT    | `/api/customers/{id}`                | ⚠️ agrégalo (extra)    | Editar cliente |
-| DELETE | `/api/customers/{id}`                | ⚠️ agrégalo (extra)    | Borrar cliente |
-| POST   | `/api/transactions/transfer`         | ⚠️ agrégalo             | Transferir dinero (usa `TransactionService.transferMoney`) |
-| GET    | `/api/transactions/account/{numero}` | ⚠️ agrégalo             | Historial de una cuenta (usa `getTransactionsForAccount`) |
+## TransactionController
 
-Ejemplo del `TransactionController` que falta:
+El controlador de transacciones puede incluir los siguientes métodos para realizar transferencias y consultar el historial de una cuenta:
 
 ```java
 @RestController
@@ -65,28 +70,41 @@ public class TransactionController {
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<TransactionDTO> transfer(@RequestBody TransactionDTO dto) {
-        return ResponseEntity.ok(transactionService.transferMoney(dto));
+    public ResponseEntity<TransactionDTO> transfer(
+            @RequestBody TransactionDTO dto) {
+        return ResponseEntity.ok(
+                transactionService.transferMoney(dto));
     }
 
     @GetMapping("/account/{accountNumber}")
-    public ResponseEntity<List<TransactionDTO>> history(@PathVariable String accountNumber) {
-        return ResponseEntity.ok(transactionService.getTransactionsForAccount(accountNumber));
+    public ResponseEntity<List<TransactionDTO>> history(
+            @PathVariable String accountNumber) {
+        return ResponseEntity.ok(
+                transactionService.getTransactionsForAccount(accountNumber));
     }
 }
 ```
 
-## Estructura
+## Estructura del proyecto
 
-```
+```text
 src/
-  api/axiosConfig.js      -> instancia central de axios (baseURL del backend)
-  components/Navbar.jsx   -> navegación entre las 3 vistas
-  pages/CustomersPage.jsx -> Vista 1: consultar/crear/editar/borrar clientes
-  pages/TransferPage.jsx  -> Vista 2: transferencia entre cuentas
-  pages/HistoryPage.jsx   -> Vista 3: historial por cliente
+├── api/
+│   └── axiosConfig.js
+├── components/
+│   └── Navbar.jsx
+└── pages/
+    ├── CustomersPage.jsx
+    ├── TransferPage.jsx
+    └── HistoryPage.jsx
 ```
 
-En la arquitectura por capas del PDF, esto reemplaza la carpeta `FRONTEND`
-(App.js, TransferFound.jsx, CreateAccountForm.jsx, TransactionHistory.jsx),
-solo que con nombres y estructura un poco más ordenados por vista/página.
+* **axiosConfig.js:** configura las peticiones HTTP al backend mediante Axios.
+* **Navbar.jsx:** contiene la navegación entre las vistas.
+* **CustomersPage.jsx:** permite gestionar los clientes.
+* **TransferPage.jsx:** permite realizar transferencias entre cuentas.
+* **HistoryPage.jsx:** muestra el historial de transacciones de una cuenta.
+
+## Organización del frontend
+
+El frontend está dividido en componentes y páginas para separar las funcionalidades de la aplicación. Esta estructura organiza las vistas de clientes, transferencias e historial en archivos independientes, en lugar de concentrarlas en los archivos utilizados en la estructura original del material de referencia, como `App.js`, `TransferFound.jsx`, `CreateAccountForm.jsx` y `TransactionHistory.jsx`.

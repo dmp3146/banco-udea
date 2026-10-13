@@ -1,3 +1,8 @@
+[![CI/CD Pipeline](https://github.com/dmp3146/banco-udea/actions/workflows/build.yml/badge.svg)](https://github.com/dmp3146/banco-udea/actions/workflows/build.yml)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=dmp3146_banco-udea&metric=alert_status)](https://sonarcloud.io/dashboard?id=dmp3146_banco-udea)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=dmp3146_banco-udea&metric=coverage)](https://sonarcloud.io/dashboard?id=dmp3146_banco-udea)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dmp3146_banco-udea&metric=bugs)](https://sonarcloud.io/dashboard?id=dmp3146_banco-udea)
+
 # BancoUdea
 
 Aplicación bancaria full-stack para la gestión de clientes y transferencias entre cuentas, desarrollada como proyecto académico. El backend expone una API REST en Spring Boot y el frontend es una SPA en React que consume esa API.
@@ -70,3 +75,25 @@ El backend sigue el patrón en capas de Spring Boot (**Controller → Service �
 - El uso de DTOs evitó exponer directamente las entidades de persistencia por la API, lo que sería un riesgo de seguridad y acoplaría el contrato de la API a los detalles internos de la base de datos.
 - Separar el frontend del backend en repositorios/carpetas independientes, comunicándose solo por HTTP, permitió avanzar en ambos de forma independiente, a costa de tener que configurar explícitamente CORS para que el navegador aceptara las peticiones.
 - Quedan pendientes mejoras de robustez (edición/eliminación de clientes, manejo más granular de errores HTTP, pruebas automatizadas) que se plantean como trabajo futuro del proyecto.
+
+
+## CI/CD
+
+Pipeline en `.github/workflows/build.yml` (GitHub Actions):
+
+1. **tests**: `mvn verify` (JUnit + JaCoCo, con H2 en memoria).
+2. **sonar**: análisis en SonarCloud.
+3. **build**: genera `bancoudea.jar` y publica la imagen en Docker Hub (`<usuario>/banco-udea`).
+4. **deploy**: dispara el despliegue en Render (solo en `main`).
+
+Estrategia de ramas: *trunk-based*. `main` es el tronco; los cambios entran por ramas cortas (`develop`, `feature/*`) mediante Pull Request.
+
+### Ejecutar con Docker
+
+```shell
+docker run -p 8080:8080 <usuario>/banco-udea:latest
+```
+
+### Variables para otra base de datos
+
+`DB_URL`, `DB_USERNAME`, `DB_PASSWORD` (y quitar el perfil `cloud` con `SPRING_PROFILES_ACTIVE=default`).

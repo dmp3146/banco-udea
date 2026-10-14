@@ -3,6 +3,8 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=dmp3146_banco-udea&metric=coverage)](https://sonarcloud.io/dashboard?id=dmp3146_banco-udea)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=dmp3146_banco-udea&metric=bugs)](https://sonarcloud.io/dashboard?id=dmp3146_banco-udea)
 
+[![Known Vulnerabilities](https://snyk.io/test/github/dmp3146/banco-udea/badge.svg)](https://snyk.io/test/github/dmp3146/banco-udea)
+
 # BancoUdea
 
 Aplicación bancaria full-stack para la gestión de clientes y transferencias entre cuentas, desarrollada como proyecto académico. El backend expone una API REST en Spring Boot y el frontend es una SPA en React que consume esa API.
@@ -97,3 +99,7 @@ docker run -p 8080:8080 <usuario>/banco-udea:latest
 ### Variables para otra base de datos
 
 `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` (y quitar el perfil `cloud` con `SPRING_PROFILES_ACTIVE=default`).
+
+##Equipo
+-dmp3146
+-ValeriaIsabel04
